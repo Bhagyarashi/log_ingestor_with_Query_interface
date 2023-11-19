@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Query Interface</title>
+</head>
+<body>
+    <h1>Log Query Interface</h1>
+
+    <!-- Form for log queries -->
+    <form id="logQueryForm">
+        <!-- Input fields for level and message -->
+        <label for="levelInput">Level:</label>
+        <input type="text" id="levelInput"><br><br>
+        
+        <label for="messageInput">Message:</label>
+        <input type="text" id="messageInput">
+
+        
+        <!-- Add more input fields for other filter criteria -->
+        <button type="button" onclick="searchLogs()">Search</button>
+    </form>
+<br>
+    <!-- Input field and button for retrieving logs by resource ID -->
+    <label for="resourceIdInput">Resource ID:</label>
+    <input type="text" id="resourceIdInput">
+    <button onclick="getResourceIdLogs()">Retrieve by Resource ID</button><br><br>
+
+    <!-- Input fields for timestamp and button to filter logs -->
+    <label for="startTimeInput">Start Time:</label>
+    <input type="datetime-local" id="startTimeInput"><br><br>
+
+    <label for="endTimeInput">End Time:</label>
+    <input type="datetime-local" id="endTimeInput">
+
+    <!-- Buttons to trigger log retrieval functions -->
+    <button onclick="filterByTimestamp()">Filter by Timestamp</button>
+    
+    <!-- Display area for log results -->
+    <h2>Results :</h2>
+    <pre id="logResults"></pre>
+
+    <script>
+        // Function to search logs based on provided criteria
+        async function searchLogs() {
+            const queryParams = getQueryParams();
+            const logs = await fetchLogs('/logs', queryParams);
+            displayLogs(logs);
+        }
+
+        // Function to construct query parameters for search
+        function getQueryParams() {
+            const level = document.getElementById('levelInput').value;
+            const message = document.getElementById('messageInput').value;
+            // Retrieve other input field values for additional filters
+            return `?level=${level}&message=${message}`;
+        }
+
+        // Function to fetch logs by resource ID
+        async function getResourceIdLogs() {
+            const resourceId = document.getElementById('resourceIdInput').value;
+            const logs = await fetchLogs(`/logs?resourceId=${resourceId}`);
+            displayLogs(logs);
+        }
+
+        // Function to filter logs by timestamp range
+        async function filterByTimestamp() {
+            const startTime = document.getElementById('startTimeInput').value;
+            const endTime = document.getElementById('endTimeInput').value;
+            const logs = await fetchLogs(`/logs?startTime=${startTime}&endTime=${endTime}`);
+            displayLogs(logs);
+        }
+
+        // Function to fetch logs from a specified URL with optional query parameters
+        async function fetchLogs(url, queryParams = '') {
+            const response = await fetch(url + queryParams);
+            return await response.json();
+        }
+
+        // Function to display fetched logs in the Results section
+        function displayLogs(logs) {
+            const logResults = document.getElementById('logResults');
+            logResults.innerHTML = ''; // Clear previous results
+
+            if (logs.length === 0) {
+                logResults.textContent = 'No results found';
+            } else {
+                const formattedLogs = JSON.stringify(logs, null, 4);
+                logResults.textContent = formattedLogs;
+            }
+        }
+    </script>
+</body>
+</html>
