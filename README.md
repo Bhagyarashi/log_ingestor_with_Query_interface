@@ -90,7 +90,7 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/log-query-system.git
-cd log-query-system
+git clone https://github.com/Bhagyarashi/log_ingestor_with_Query_interface.git
+cd log_ingestor_with_Query_interface
 
 
